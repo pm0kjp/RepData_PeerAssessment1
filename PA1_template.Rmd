@@ -37,24 +37,30 @@ tail(exercise_data)
 
 ## What is mean total number of steps taken per day?
 
-I'll use mean first, keeping in mind that I'll need to remove NA values first.
+First I have to aggregate steps per day:
 ```{r eval=TRUE, echo=TRUE}
-mean(exercise_data$steps, na.rm=TRUE)
+by_day<-aggregate(x=exercise_data$steps, by=list(exercise_data$date), FUN=sum, na.rm=TRUE)
+colnames(by_day)<-c("date", "steps")
 ```
 
-The mean number of steps is 37.3826.
+I'll use mean first, keeping in mind that I'll need to remove NA values first.
+```{r eval=TRUE, echo=TRUE}
+mean(by_day$steps, na.rm=TRUE)
+```
+
+The mean number of steps per day is 9354.23
 
 Now we can do the same with median:
 ```{r eval=TRUE, echo=TRUE}
-median(exercise_data$steps, na.rm=TRUE)
+median(by_day$steps, na.rm=TRUE)
 ```
 
-The median step count is 0 (not a lot of walking happening!).
+The median step count is 10395.
 
-We can confirm this odd finding with a histogram, which shows a sharply asymmetrical distribution with an overwhelming majority of values at or near 0:
+We can confirm this  finding with a histogram:
 
 ```{r eval=TRUE, echo=TRUE}
-hist(exercise_data$steps)
+hist(by_day$steps)
 ```
 
 ## What is the average daily activity pattern?
@@ -118,13 +124,16 @@ head(imputed_data)
 
 Let's compare the histogram, mean, and median of this dataset with what I found with the original dataset!
 
+First I have to aggregate steps per day:
 ```{r eval=TRUE, echo=TRUE}
-mean(imputed_data$steps, na.rm=TRUE)
-median(imputed_data$steps, na.rm=TRUE)
-hist(imputed_data$steps)
+by_day<-aggregate(x=imputed_data$steps, by=list(exercise_data$date), FUN=sum, na.rm=TRUE)
+colnames(by_day)<-c("date", "steps")
+mean(by_day$steps, na.rm=TRUE)
+median(by_day$steps, na.rm=TRUE)
+hist(by_day$steps)
 ```
 
-Unsurprisingly, there's no difference, because I filled in missing values with means, so they should not affect the means!
+There is a difference: Both the mean and the median have risen!
 
 ## Are there differences in activity patterns between weekdays and weekends?
 

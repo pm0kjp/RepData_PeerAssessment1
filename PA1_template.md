@@ -81,38 +81,45 @@ tail(exercise_data)
 
 ## What is mean total number of steps taken per day?
 
+First I have to aggregate steps per day:
+
+```r
+by_day<-aggregate(x=exercise_data$steps, by=list(exercise_data$date), FUN=sum, na.rm=TRUE)
+colnames(by_day)<-c("date", "steps")
+```
+
 I'll use mean first, keeping in mind that I'll need to remove NA values first.
 
 ```r
-mean(exercise_data$steps, na.rm=TRUE)
+mean(by_day$steps, na.rm=TRUE)
 ```
 
 ```
-## [1] 37.3826
+## [1] 9354.23
 ```
 
-The mean number of steps is 37.3826.
+The mean number of steps per day is 9354.23
 
 Now we can do the same with median:
 
 ```r
-median(exercise_data$steps, na.rm=TRUE)
+median(by_day$steps, na.rm=TRUE)
 ```
 
 ```
-## [1] 0
+## [1] 10395
 ```
 
-The median step count is 0 (not a lot of walking happening!).
+The median step count is 10395.
 
-We can confirm this odd finding with a histogram, which shows a sharply asymmetrical distribution with an overwhelming majority of values at or near 0:
+We can confirm this  finding with a histogram:
 
 
 ```r
-hist(exercise_data$steps)
+hist(by_day$steps)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png)
 
 ## What is the average daily activity pattern?
 
@@ -156,7 +163,7 @@ Now that we've aggregated our data, let's plot it!
 plot(daily_data$TimeOfDay, daily_data$MeanNumberOfSteps, type="l")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png)
 
 Find the time of day with the max mean number of steps:
 
@@ -246,30 +253,33 @@ head(imputed_data)
 
 Let's compare the histogram, mean, and median of this dataset with what I found with the original dataset!
 
+First I have to aggregate steps per day:
 
 ```r
-mean(imputed_data$steps, na.rm=TRUE)
+by_day<-aggregate(x=imputed_data$steps, by=list(exercise_data$date), FUN=sum, na.rm=TRUE)
+colnames(by_day)<-c("date", "steps")
+mean(by_day$steps, na.rm=TRUE)
 ```
 
 ```
-## [1] 37.3826
-```
-
-```r
-median(imputed_data$steps, na.rm=TRUE)
-```
-
-```
-## [1] 0
+## [1] 10766.19
 ```
 
 ```r
-hist(imputed_data$steps)
+median(by_day$steps, na.rm=TRUE)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-14-1.png)
+```
+## [1] 11015
+```
 
-Unsurprisingly, there's no difference, because I filled in missing values with means, so they should not affect the means!
+```r
+hist(by_day$steps)
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-15-1.png)
+
+There is a difference: Both the mean and the median have risen!
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -361,6 +371,6 @@ After a bit of tweaking with the various arguments, we are able to plot the acti
 xyplot(MeanNumberOfSteps ~ TimeOfDay | as.factor(DayType), data=wd_we_data, layout =c(1,2), type = "l", ylim=c(0,250), xlim=c(0,24))
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-18-1.png)
+![](PA1_template_files/figure-html/unnamed-chunk-19-1.png)
 
 It seems, from the graph, that weekend activity is more spread out over the day than weekday activity, which spikes at morning and evening "rush hour".
